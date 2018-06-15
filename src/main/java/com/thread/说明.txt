@@ -1,0 +1,19 @@
+1. 用jdk15以前的collection类的时候可能会产生2个潜在问题
+  a  它们线程非安全
+  b  collection在迭代的时候，不能去修改集合的数据。会产生ConcurrentModificationException，
+  	 我们用jdk15提供的比如：CopyOnWriteArrayList代替ArrayList 
+  	 
+2. 我们在做多线程的时候最好不要去依赖main主线程。【【最好的方法是创建一个新线程的。绝对比依赖main线程安全。】】
+
+		//如果直接用main线程的for--》 要注意它们三者放的位置。如果这样放的话。只执行一次就死锁了。因为执行完第1次for[shouldSub=2]。执行第2个for，这个时候 while(shouldSub != 1){condition1.await
+		//因为for是一步步走下去的。
+		//而其他2个线程还没开始执行。所以这样的代码应该先把所以该起的线程都先启动起来【把for放在他们2个线程之后】。或则用下面这种方式，不去依赖main线程
+		for(int i=1;i<=50;i++){
+			business.main(i);
+		}	
+			
+		new Thread().start(); //2
+		new Thread().start(); //3
+	这样的话如果for阻塞或其他原因，那线程2和线程3永远也得不到执行的。		 
+	请参看类子：cn.itcast.heima2.ThreeConditionCommunication 。
+	【【最好的方法是创建一个新线程的。绝对比依赖main线程安全。】】

@@ -1,0 +1,83 @@
+[[[如果参数的值含有中文字符等特殊字符需要转换成utf-8格式的url编码 ]]]
+
+1. 客户端如果是直接get或post到服务端的话，参数值可能出现“中文”或其他特殊的字符串。这时候我们要约定url的相关参数的编码。java提供了 URLEncoder 和 URLDecoder 2个帮助类。
+String s2 = URLEncoder.encode("ab中国移动","utf-8");
+System.out.println(s2);
+结果：ab%E4%B8%AD%E5%9B%BD%E7%A7%BB%E5%8A%A8
+
+注意：如果在编码encode的时候不指定编码。encode会采用平台默认编码【这样很危险】，最好是指定下编码。
+
+{{
+String s1 = URLEncoder.encode("ab中国移动");
+System.out.println(s1);
+结果:ab%D6%D0%B9%FA%D2%C6%B6%AF
+这个是打印出“gbk”的字符串
+}}
+
+解码：
+
+String s4 = URLDecoder.decode(s2, "utf-8");
+
+
+【
+
+对 String 编码时，使用以下规则： 
+
+字母数字字符 "a" 到 "z"、"A" 到 "Z" 和 "0" 到 "9" 保持不变。 
+特殊字符 "."、"-"、"*" 和 "_" 保持不变。 
+空格字符 " " 转换为一个加号 "+"。 
+所有其他字符都是不安全的，因此首先使用一些编码机制将它们转换为一个或多个字节。
+然后每个字节用一个包含 3 个字符的字符串 "%xy" 表示，其中 xy 为该字节的两位十六进制表示形式。
+推荐的编码机制是 UTF-8。但是，出于兼容性考虑，如果未指定一种编码，则使用相应平台的默认编码。 
+
+】
+
+
+
+2. js前端如果是有以上情况：也是需要处理的。
+js对文字进行编码涉及3个函数：escape,encodeURI,encodeURIComponent，相应3个解码函数：unescape,decodeURI,decodeURIComponent
+
+		1、传递参数时需要使用encodeURIComponent，这样组合的url才不会被#等特殊字符截断。
+			 例如：<script>document.write('<a href="http://passport.baidu.com/?logout&aid=7&u='+encodeURIComponent("http://cang.baidu.com/bruce42")+'">退出</a>');</script>
+		2、 进行url跳转时可以整体使用encodeURI 
+			 例如： Location.href=encodeURI(http://cang.baidu.com/do/s?word=中国asp之家&ct=21);
+			 
+		实验一下：
+			alert(encodeURI("http://cang.baidu.com/do/s?word=中国asp之家&ct=21"))
+			alert(encodeURIComponent("http://cang.baidu.com/do/s?word=中国asp之家&ct=21"))
+
+		3、js使用数据时可以使用escape
+			例如：搜藏中history纪录。
+		4、escape对0-255以外的unicode值进行编码时输出%u****格式，其它情况下escape，encodeURI，encodeURIComponent编码结果相同。 
+			 最多使用的应为encodeURIComponent，它是将中文、韩文等特殊字符转换成utf-8格式的url编码，
+			 所以如果给后台传递参数需要使用encodeURIComponent时 
+			 需要后台解码对utf-8支持（form中的编码方式和当前页面编码方式相同）。
+			 escape不编码字符有69个：*，+，-，.，/，@，_，0-9，a-z，A-Z
+			 encodeURI不编码字符有82个：!，#，$，&，'，(，)，*，+，,，-，.，/，:，;，=，?，@，_，~，0-9，a-z，A-Z
+			 encodeURIComponent不编码字符有71个：!， '，(，)，*，-，.，_，~，0-9，a-z，A-Z
+	
+	
+ 附上这个三个函数的介绍:
+       escape 方法  对 String 对象编码以便它们能在所有计算机上可读，
+       escape(charString) 必选项 charstring 参数是要编码的任意 String 对象或文字。
+      说明： escape 方法返回一个包含了 charstring 内容的字符串值（ Unicode 格式）。
+	  所有空格、标点、重音符号以及其他非 ASCII 字符都用 %xx 编码代替，
+      其中 xx 等于表示该字符的十六进制数。例如，空格返回的是 "%20" 。
+      字符值大于 255 的以 %uxxxx 格式存储。
+    注意：escape 方法不能够用来对统一资源标示码 (URI) 进行编码。对其编码应使用 encodeURI 和encodeURIComponent 方法。
+    encodeURIComponent 方法：
+       将文本字符串编码为一个统一资源标识符 (URI) 的一个有效组件。
+       encodeURIComponent(encodedURIString)必选的 encodedURIString 参数代表一个已编码的 URI 组件。
+       说明：
+         encodeURIComponent 方法返回一个已编码的 URI。如果您将编码结果传递给 decodeURIComponent，
+		 那么将返回初始的字符串。因为 encodeURIComponent 方法对所有的字符编码，请注意，如果该字符串代表一个路径，例如 /folder1/folder2/default.html，其中的斜杠也将被编码。这样一来，
+		 当该编码结果被作为请求发送到 web 服务器时将是无效的。如果字符串中包含不止一个 URI 组件，请使用 encodeURI 方法进行。
+
+
+
+
+
+
+
+	 
+	 
