@@ -42,14 +42,14 @@ public class DynamicProxy implements InvocationHandler {
 	
 	public static void main(String[] args) {
 		/* 设置此系统属性,让JVM生成的Proxy类写入文件.保存路径为：com/sun/proxy(如果不存在请手工创建) */  
-        System.getProperties().put("sun.misc.ProxyGenerator.saveGeneratedFiles", "true"); 
+//        System.getProperties().put("sun.misc.ProxyGenerator.saveGeneratedFiles", "true"); 
 		DynamicProxy dynamicProxy = new DynamicProxy();
 		
 		Class<?> cls = Proxy.getProxyClass(IHello.class.getClassLoader(), IHello.class.getInterfaces());
 		System.out.println(cls);
 		
 		IHello hello = (IHello)dynamicProxy.bindObj(new Hello());
-		hello.sayHello();
+		hello.sayHello("你您");
 //		hello.toString();
 		
 	}

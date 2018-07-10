@@ -17,6 +17,6 @@ package com.proxy;
  */
 public interface IHello {
 	
-	public void sayHello();
+	public void sayHello(String str);
 
 }
