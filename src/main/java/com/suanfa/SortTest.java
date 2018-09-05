@@ -1,4 +1,4 @@
-package com.Collection;
+package com.suanfa;
 /*
  * Copyright (C), 2013-2016, 上汽集团
  * FileName: SortTest.java
